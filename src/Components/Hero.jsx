@@ -33,7 +33,7 @@ function Hero() {
           >
             <Link
               to="/addBorrower"
-              className="flex items-center justify-center gap-x-3 py-3 px-6 text-lg font-semibold text-white bg-indigo-600 rounded-full shadow-lg transition-transform transform hover:scale-105 hover:bg-indigo-500 active:bg-indigo-700"
+              className="no-underline flex items-center justify-center gap-x-3 py-3 px-6 text-lg font-semibold text-white bg-indigo-600 rounded-full shadow-lg transition-transform transform hover:scale-105 hover:bg-indigo-500 active:bg-indigo-700"
             >
               Apply Now
               <FaArrowRight className="w-5 h-5" />

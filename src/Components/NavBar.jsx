@@ -78,13 +78,13 @@ function NavBar() {
               </button>
               {isProfileOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-gray-800 text-white rounded-md shadow-lg">
-                  <Link to="/profile" className="block px-4 py-2 hover:bg-gray-700" aria-label="My Profile">My Profile</Link>
+                  <Link to="/profile" className="block w-full px-4 py-2 text-white hover:bg-gray-700 no-underline" aria-label="My Profile">My Profile</Link>
                   <button onClick={handleLogout} className="block w-full px-4 py-2 text-left hover:bg-gray-700" aria-label="Logout">Logout</button>
                 </div>
               )}
             </div>
           ) : (
-            <Link to="/login" className="text-white px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 " aria-label="Login">
+            <Link to="/login" className="no-underline text-white px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 " aria-label="Login">
               Login
             </Link>
           )}

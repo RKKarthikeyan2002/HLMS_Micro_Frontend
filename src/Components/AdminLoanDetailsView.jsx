@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { Card, Row, Col, Alert, Spinner, ListGroup, Dropdown } from 'react-bootstrap';
+import { Card, Row, Col, Alert, Spinner, ListGroup, Button } from 'react-bootstrap';
 import { FaFileImage, FaUser, FaInfoCircle } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -137,26 +137,38 @@ const AdminLoanDetailsView = () => {
                 <Col md={9}>{status}</Col>
               </Row>
               {status.toLowerCase() === 'pending' && (
-                <Dropdown className="mt-3">
-                  <Dropdown.Toggle variant="warning" id="dropdown-basic">
-                    Update Status
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    <Dropdown.Item onClick={() => handleStatusChange('Accepted')}>Accept</Dropdown.Item>
-                    <Dropdown.Item onClick={() => handleStatusChange('Rejected')}>Reject</Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown>
+                <div className="mt-3">
+                  <Button 
+                    variant="success" 
+                    className="mr-2" 
+                    onClick={() => handleStatusChange('Accepted')}
+                  >
+                    Accept
+                  </Button>
+                  <Button 
+                    variant="danger" 
+                    onClick={() => handleStatusChange('Rejected')}
+                  >
+                    Reject
+                  </Button>
+                </div>
               )}
               {status.toLowerCase() === 'processing' && (
-                <Dropdown className="mt-3">
-                  <Dropdown.Toggle variant="warning" id="dropdown-basic">
-                    Update Status
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    <Dropdown.Item onClick={() => handleStatusChange('Approved')}>Approve</Dropdown.Item>
-                    <Dropdown.Item onClick={() => handleStatusChange('Rejected')}>Reject</Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown>
+                <div className="mt-3">
+                  <Button 
+                    variant="success" 
+                    className="mr-2" 
+                    onClick={() => handleStatusChange('Approved')}
+                  >
+                    Approve
+                  </Button>
+                  <Button 
+                    variant="danger" 
+                    onClick={() => handleStatusChange('Rejected')}
+                  >
+                    Reject
+                  </Button>
+                </div>
               )}
             </Card.Body>
           </Card>

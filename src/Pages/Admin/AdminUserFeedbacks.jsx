@@ -6,10 +6,10 @@ import UserFeedbacks from '../../Components/UserFeedbacks';
 
 function AdminUserFeedbacks() {
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
+    <div className="">
       <AdminNavbar />
       <Container fluid className="">
-        <Row className="mb-6">
+        <Row className="">
           <Col>
             <motion.div
               initial={{ opacity: 0, y: -20 }}
@@ -27,7 +27,7 @@ function AdminUserFeedbacks() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
             >
-              <div className="bg-white shadow-lg rounded-lg p-6">
+              <div className="">
                 <UserFeedbacks />
               </div>
             </motion.div>

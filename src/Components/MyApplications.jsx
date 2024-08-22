@@ -107,7 +107,7 @@ function MyApplications() {
         return 'border-primary text-dark'; 
       case 'processing':
         return 'border-primary text-dark'; 
-      case 'waiting aggrement':
+      case 'waiting agreement':
         return 'border-primary text-dark'; 
       case 'rejected':
         return 'border-danger text-dark';
@@ -124,10 +124,10 @@ function MyApplications() {
         return 'primary'; 
       case 'processing':
         return 'primary'; 
-      case 'waiting aggrement':
+      case 'waiting agreement':
         return 'primary';
       case 'rejected':
-        return 'red'; 
+        return 'danger'; 
       default:
         return ''; 
     }
@@ -138,13 +138,13 @@ function MyApplications() {
       case 'pending':
         return 'text-warning'; 
       case 'accepted':
-        return 'text-success'; 
+        return 'text-primary'; 
       case 'processing':
-        return 'text-success'; 
-      case 'waiting aggrement':
-        return 'text-success';
+        return 'text-primary'; 
+      case 'waiting agreement':
+        return 'text-primary';
       case 'rejected':
-        return 'text-red';
+        return 'text-danger';
       default:
         return '';
     }

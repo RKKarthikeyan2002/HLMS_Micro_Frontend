@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useLocation } from 'react-router-dom';
-import { Container, Row, Col, Card, ListGroup } from 'react-bootstrap';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Container, Row, Col, Card, ListGroup, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { FaFileImage } from 'react-icons/fa';
+import { FaFileImage, FaFilePdf } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 
 function LoanDetails() {
@@ -12,6 +12,7 @@ function LoanDetails() {
   const [collaterals, setCollaterals] = useState([]);
   const location = useLocation();
   const { loan } = location.state || {};
+  const navigate = useNavigate();
 
   const imageFileExtensions = ['jpg', 'jpeg', 'png', 'gif'];
 
@@ -51,6 +52,10 @@ function LoanDetails() {
   const { status, borrower } = loanApplication;
   const { name, email, phone, age, dob, address, salary, aadhar, pan, creditScore } = borrower;
 
+  const handleAgreement = (application) => {
+    navigate(`/agreement`, { state: { application } });
+  };
+
   return (
     <Container>
       <h1 className="my-4">Loan Details</h1>
@@ -73,8 +78,11 @@ function LoanDetails() {
                 <Col md={3}>{termMonths} months</Col>
               </Row>
               <Row className="details-row">
+                
                 <Col md={3}><strong>Status:</strong></Col>
-                <Col md={9}>{status}</Col>
+                <Col md={3}>{status}</Col>
+                <Col md={3}><strong>EMI:</strong></Col>
+                <Col md={3}>{Math.round(loan.loanApplication.amount / loan.loanApplication.termMonths)}</Col>
               </Row>
             </Card.Body>
           </Card>
@@ -181,6 +189,11 @@ function LoanDetails() {
           </Card.Body>
         </Card>
       )}
+      {loan.loanApplication.status.toLowerCase() === 'approved' && (
+          <Button variant="primary" onClick={() => handleAgreement(loan.loanApplication)}>
+            <FaFilePdf className="mr-2" /> Agreement
+          </Button>
+        )}
     </Container>
   );
 }

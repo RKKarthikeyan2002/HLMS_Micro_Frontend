@@ -61,7 +61,6 @@ function AdminNavbar() {
                 <div className="w-10 h-10 bg-gray-700 text-white flex items-center justify-center rounded-full no-underline text-white">
                   {userInitial}
                 </div>
-                <span>Profile</span>
               </button>
               {isProfileOpen && (
                 <motion.div
@@ -70,13 +69,13 @@ function AdminNavbar() {
                   transition={{ duration: 0.3 }}
                   className="absolute right-0 mt-2 w-48 bg-gray-800 text-white rounded-md shadow-lg"
                 >
-                  <Link to="/profile" className="block px-4 py-2 hover:bg-gray-700 transition-colors">My Profile</Link>
+                  <Link to="/profile" className="block w-full px-4 py-2 text-white hover:bg-gray-700 transition-colors no-underline">My Profile</Link>
                   <button onClick={handleLogout} className="block w-full px-4 py-2 text-left hover:bg-gray-700 transition-colors">Logout</button>
                 </motion.div>
               )}
             </div>
           ) : (
-            <Link to="/login" className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md transition-colors">Login</Link>
+            <Link to="/login" className="no-underline bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md transition-colors">Login</Link>
           )}
         </div>
 

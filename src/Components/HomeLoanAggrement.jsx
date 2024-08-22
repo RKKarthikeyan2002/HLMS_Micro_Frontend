@@ -1,15 +1,18 @@
 import React from 'react';
-import { Container, Row, Col, Card, Table, Form, Dropdown } from 'react-bootstrap';
+import { Container, Row, Col, Card, Table, Form, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const HomeLoanAgreement = () => {
   const navigate = useNavigate();
-
   const location = useLocation();
   const { application } = location.state || {};
 
+  // Check if the application has a status and it's approved
+  const isApproved = application?.status === 'Approved';
+
+  // Agreement details using application information
   const agreementDetails = {
     date: "August 20, 2024",
     lender: {
@@ -19,24 +22,26 @@ const HomeLoanAgreement = () => {
       contact: "123-456-7890",
     },
     borrower: {
-      name: "Karthi",
-      address: "456 Residential Rd",
-      cityStateZip: "Homeville, HV 67890",
-      contact: "987-654-3210",
+      name: application?.borrower?.name || "Unknown",
+      address: application?.borrower?.address || "Unknown",
+      cityStateZip: application?.borrower?.address || "Unknown",
+      contact: application?.borrower?.phone || "Unknown",
     },
-    loanAmount: "1,000,000",
-    numberOfInstallments: 2,
-    disbursementDate: "2024-01-01",
-    interestRate: "5",
-    installmentAmount: "500,000",
-    firstInstallmentDate: "2024-01-01",
+    loanAmount: application?.amount || "0",
+    numberOfInstallments: application?.termMonths || 0,
+    disbursementDate: "30-08-2024",  // Assuming a fixed date or you can get this from the application if available
+    interestRate: application?.interest || "0",
+    installmentAmount: application.amount / 4,  // Assuming fixed installment amount or derive this from application
+    firstInstallmentDate: "30-08-2024",  // Assuming a fixed date
     collateralDescription: "A mortgage on the property located at 789 Dream House Ave, Dreamtown, DT 54321",
     useOfLoan: "Purchasing a home",
     disbursementSchedule: [
-      { installmentNumber: 1, amount: "500,000", date: "2024-01-01" },
-      { installmentNumber: 2, amount: "500,000", date: "2024-02-01" },
+      { installmentNumber: 1, amount: "500,000", date: "30-08-2024" },
+      { installmentNumber: 2, amount: "500,000", date: "04-12-2024" },
+      { installmentNumber: 3, amount: "500,000", date: "16-04-2025" },
+      { installmentNumber: 4, amount: "500,000", date: "22-08-2025" },
     ],
-    state: "Madurai",
+    state: application?.borrower?.address || "Unknown",  // Adjust based on availability
   };
 
   const handleStatusChange = async (status) => {
@@ -52,24 +57,24 @@ const HomeLoanAgreement = () => {
     try {
       await axios.patch(`http://localhost:8080/loanappli/application/${application.id}`, formData, {
         headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data'
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
         }
       });
 
       if (status === 'Approved') {
         const loanData = {
-            amount: application.amount,
-            type: application.type,
-            interest: application.interest,
-            termMonths: application.termMonths,
+          amount: application.amount,
+          type: application.type,
+          interest: application.interest,
+          termMonths: application.termMonths,
         };
 
         await axios.post(`http://localhost:8080/loan/${application.id}`, loanData, {
-            headers: { 'Authorization': `Bearer ${token}` }
+          headers: { 'Authorization': `Bearer ${token}` }
         });
-    }
-      navigate("/")
+      }
+      navigate("/");
     } catch (error) {
       console.error('Error updating loan status:', error);
       alert('Error updating loan status. Please try again.');
@@ -120,7 +125,6 @@ const HomeLoanAgreement = () => {
                 <strong>Number of Installments:</strong> {agreementDetails.numberOfInstallments}<br />
                 <strong>Installment Amount:</strong> ₹{agreementDetails.installmentAmount}<br />
                 <strong>First Installment Date:</strong> {agreementDetails.firstInstallmentDate}<br />
-                <strong>Collateral:</strong> {agreementDetails.collateralDescription}<br />
                 <strong>Use of Loan:</strong> {agreementDetails.useOfLoan}
               </Card.Text>
 
@@ -176,7 +180,7 @@ const HomeLoanAgreement = () => {
                   {agreementDetails.disbursementSchedule.map((item, index) => (
                     <tr key={index}>
                       <td>{item.installmentNumber}</td>
-                      <td>{item.amount}</td>
+                      <td>{application.amount / 4}</td>
                       <td>{item.date}</td>
                     </tr>
                   ))}
@@ -187,20 +191,29 @@ const HomeLoanAgreement = () => {
                 This Agreement is made and entered into as of {agreementDetails.date}.
               </Card.Text>
 
-              <Form className="mt-4">
+              {!isApproved && (
+                <Form className="mt-4">
                   <Form.Group controlId="agreementOptions">
                     <Form.Label>Do you agree to the terms of the agreement?</Form.Label>
-                    <Dropdown className="mt-3">
-                  <Dropdown.Toggle variant="warning" id="dropdown-basic">
-                    Select
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    <Dropdown.Item onClick={() => handleStatusChange('Approved')}>Agree</Dropdown.Item>
-                    <Dropdown.Item onClick={() => handleStatusChange('Rejected')}>Not Agree</Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown>
+                    <div className="mt-3">
+                      <Button 
+                        variant="success" 
+                        className="mr-2" 
+                        onClick={() => handleStatusChange('Approved')}
+                      >
+                        Agree
+                      </Button>
+                      <Button 
+                        variant="danger" 
+                        onClick={() => handleStatusChange('Rejected')}
+                      >
+                        Not Agree
+                      </Button>
+                    </div>
                   </Form.Group>
-              </Form>
+                </Form>
+              )}
+              <strong>Name: </strong>{agreementDetails.borrower.name} {isApproved && "(Signed)"}
             </Card.Body>
           </Card>
         </Col>
