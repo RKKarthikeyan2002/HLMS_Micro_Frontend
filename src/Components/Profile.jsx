@@ -91,10 +91,15 @@ function Profile() {
         const decodedToken = jwtDecode(token);
         const { sub } = decodedToken;
 
+        if (newPassword === oldPassword) {
+            alert('Old password and New Password should not be same');
+            return;
+        }
+
         if (newPassword !== confirmPassword) {
             alert('New passwords do not match');
             return;
-        }
+        }        
 
         const password = new FormData();
         password.append("newPassword", newPassword);

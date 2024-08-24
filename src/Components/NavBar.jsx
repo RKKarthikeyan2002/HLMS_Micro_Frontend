@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../Providers/AuthContext';
 import '../Styles/NavBar.css';
+import {jwtDecode} from 'jwt-decode';
 
 function NavBar() {
   const navigate = useNavigate();
@@ -9,11 +10,17 @@ function NavBar() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { isAuthenticated, user, logout, login } = useAuth(); // Destructure auth values
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
+  const [userInitial, setUserInitial] = useState('C');
 
   useEffect(() => {
     const token = sessionStorage.getItem("token");
     if (token) {
         login()
+        const decodedToken = jwtDecode(token);
+        const { sub } = decodedToken;
+        if (sub && typeof sub === 'string') {
+          setUserInitial(sub[0].toUpperCase());
+        }
         return;
     }
   }, [navigate]);
@@ -29,8 +36,6 @@ function NavBar() {
   const toggleCalculator = () => {
     setIsCalculatorOpen(!isCalculatorOpen); 
   };
-
-  const userInitial = (user && typeof user === 'string') ? user[0].toUpperCase() : 'C';
 
   const handleLogout = () => {
     sessionStorage.removeItem('token');

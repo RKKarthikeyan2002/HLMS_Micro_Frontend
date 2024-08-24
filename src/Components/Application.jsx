@@ -34,7 +34,9 @@ function Application() {
     const validateForm = () => {
         const newErrors = {};
         if (!formData.amount) newErrors.amount = 'Loan amount is required';
+        if (formData.amount < 500000) newErrors.amount = 'Minimum Loan amount is 5 Lakhs';
         if (!formData.termMonths) newErrors.termMonths = 'Term in months is required';
+        if (formData.termMonths < 36) newErrors.termMonths = 'Minimum Term months is 36';
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };

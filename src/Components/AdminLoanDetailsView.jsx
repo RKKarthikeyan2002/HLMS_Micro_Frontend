@@ -134,7 +134,9 @@ const AdminLoanDetailsView = () => {
               </Row>
               <Row className="details-row">
                 <Col md={3}><strong>Status:</strong></Col>
-                <Col md={9}>{status}</Col>
+                <Col md={3}>{status}</Col>
+                <Col md={3}><strong>EMI:</strong></Col>
+                <Col md={3}>{Math.round(amount / termMonths)}</Col>
               </Row>
               {status.toLowerCase() === 'pending' && (
                 <div className="mt-3">

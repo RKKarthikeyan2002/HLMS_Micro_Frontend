@@ -118,7 +118,7 @@ function SignUp() {
                   value={formData.name}
                   onChange={handleChange}
                   className="w-full pl-10 pr-4 py-2 border rounded-lg shadow-sm focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600"
-                  placeholder="Name"
+                  placeholder="User Name"
                 />
               </label>
             </div>

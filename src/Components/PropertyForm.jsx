@@ -42,7 +42,7 @@ function PropertyForm() {
     const validateForm = () => {
         const newErrors = {};
         if (!propertyFile) newErrors.propertyFile = 'Property file is required';
-        if (!itr) newErrors.itr = 'ITR 1 file is required';
+        if (!itr) newErrors.itr = 'ITR file is required';
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
