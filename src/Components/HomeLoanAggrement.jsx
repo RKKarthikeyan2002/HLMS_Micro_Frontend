@@ -3,6 +3,7 @@ import { Container, Row, Col, Card, Table, Form, Button } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const HomeLoanAgreement = () => {
   const navigate = useNavigate();
@@ -55,26 +56,50 @@ const HomeLoanAgreement = () => {
     formData.append('status', status);
 
     try {
-      await axios.patch(`http://localhost:8080/loanappli/application/${application.id}`, formData, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data'
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes"
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          await axios.patch(`http://localhost:8080/loanappli/application/${application.id}`, formData, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data'
+            }
+          });
+    
+          if (status === 'Approved') {
+            const loanData = {
+              amount: application.amount,
+              type: application.type,
+              interest: application.interest,
+              termMonths: application.termMonths,
+            };
+    
+            await axios.post(`http://localhost:8080/loan/${application.id}`, loanData, {
+              headers: { 'Authorization': `Bearer ${token}` }
+            });
+            await Swal.fire({
+              title: "Agreement Accepted",
+              icon: "success"
+            });
+          }
+          else if(status === 'Rejected'){
+            await Swal.fire({
+              title: "Agreement Rejected",
+              icon: "success"
+            });
+          }
+          
+          navigate("/");
         }
       });
-
-      if (status === 'Approved') {
-        const loanData = {
-          amount: application.amount,
-          type: application.type,
-          interest: application.interest,
-          termMonths: application.termMonths,
-        };
-
-        await axios.post(`http://localhost:8080/loan/${application.id}`, loanData, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-      }
-      navigate("/");
+      
     } catch (error) {
       console.error('Error updating loan status:', error);
       alert('Error updating loan status. Please try again.');

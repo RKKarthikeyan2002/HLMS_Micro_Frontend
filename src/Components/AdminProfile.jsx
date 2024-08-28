@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {jwtDecode} from 'jwt-decode';
 
-function Profile() {
+function AdminProfile() {
     const navigate = useNavigate();
     const [data, setData] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -26,7 +26,7 @@ function Profile() {
     });
 
     useEffect(() => {
-        const token = sessionStorage.getItem("token");
+        const token = sessionStorage.getItem("adminToken");
         if (!token) {
             navigate('/');
             return;
@@ -38,18 +38,17 @@ function Profile() {
             headers: { 'Authorization': `Bearer ${token}` }
         })
         .then(response => {
-            const customerData = response.data;
-            setData(customerData);
+            setData(response.data);
             setFormData({
-                id: customerData.id,
-                name: customerData.name,
-                email: customerData.email,
-                phone: customerData.phone || '',
-                address: customerData.address || '',
-                age: calculateAge(customerData.dob),
-                dob: customerData.dob || '',
-                password: customerData.password,
-                role: customerData.role,
+                id: response.data.id,
+                name: response.data.name,
+                email: response.data.email,
+                phone: response.data.phone || '',
+                address: response.data.address || '',
+                age: response.data.age || '',
+                dob: response.data.dob || '',
+                password: response.data.password,
+                role: response.data.role,
             });
         })
         .catch(error => {
@@ -57,37 +56,16 @@ function Profile() {
         });
     }, [navigate]);
 
-    const calculateAge = (dob) => {
-        if (!dob) return '';
-        const birthDate = new Date(dob);
-        const today = new Date();
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const monthDifference = today.getMonth() - birthDate.getMonth();
-        if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-            age--;
-        }
-        return age;
-    };
-
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prevState => {
-            const newState = {
-                ...prevState,
-                [name]: value,
-            };
-
-            // Calculate age if dob changes
-            if (name === 'dob') {
-                newState.age = calculateAge(value);
-            }
-
-            return newState;
-        });
+        setFormData(prevState => ({
+            ...prevState,
+            [name]: value,
+        }));
     };
 
     const handleSave = () => {
-        const token = sessionStorage.getItem("token");
+        const token = sessionStorage.getItem("adminToken");
 
         axios.put(`http://localhost:8080/customer/update`, formData, {
             headers: { 'Authorization': `Bearer ${token}` }
@@ -99,18 +77,6 @@ function Profile() {
         .catch(error => {
             console.error('Error updating customer data:', error);
         });
-    };
-
-    const validatePassword = (password) => {
-        const hasUppercase = /[A-Z]/.test(password);
-        const hasLowercase = /[a-z]/.test(password);
-        const hasNumber = /\d/.test(password);
-        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-    
-        if (!hasUppercase || !hasLowercase || !hasNumber || !hasSpecialChar) {
-            return false;
-        }
-        return true;
     };
 
     const handlePasswordChange = () => {
@@ -135,11 +101,6 @@ function Profile() {
             return;
         }        
 
-        if (!validatePassword(newPassword)) {
-            alert('New password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.');
-            return;
-        }
-
         const password = new FormData();
         password.append("newPassword", newPassword);
         password.append("oldPassword", oldPassword);
@@ -158,14 +119,6 @@ function Profile() {
             console.error('Error changing password:', error);
             alert('Error changing password');
         });
-    };
-
-    const formatDate = (dateString) => {
-        if (!dateString) return 'N/A';
-
-        const date = new Date(dateString);
-        const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-        return date.toLocaleDateString(undefined, options);
     };
 
     if (!data) {
@@ -213,11 +166,11 @@ function Profile() {
                             </div>
                             <div className="flex justify-between py-2 border-b">
                                 <span className="font-medium">Age:</span>
-                                <span>{formData.age || 'N/A'}</span>
+                                <span>{data.age || 'N/A'}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b">
                                 <span className="font-medium">Date of Birth:</span>
-                                <span>{formatDate(data.dob) || 'N/A'}</span>
+                                <span>{data.dob || 'N/A'}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b">
                                 <span className="font-medium">Password:</span>
@@ -287,6 +240,17 @@ function Profile() {
                                     name="address"
                                     type="text"
                                     value={formData.address}
+                                    onChange={handleInputChange}
+                                    className="w-full p-2 border border-gray-300 rounded"
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium mb-1" htmlFor="age">Age</label>
+                                <input
+                                    id="age"
+                                    name="age"
+                                    type="text"
+                                    value={formData.age}
                                     onChange={handleInputChange}
                                     className="w-full p-2 border border-gray-300 rounded"
                                 />
@@ -385,4 +349,4 @@ function Profile() {
     );
 }
 
-export default Profile;
+export default AdminProfile;

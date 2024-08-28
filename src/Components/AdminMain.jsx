@@ -6,15 +6,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { FaInfoCircle, FaSearch } from 'react-icons/fa';
 import { IoMdRefresh } from 'react-icons/io';
 import { MdClear } from 'react-icons/md';
+import { motion } from 'framer-motion';
 
 function AdminMain() {
   const [allLoans, setAllLoans] = useState([]);
   const [filteredLoans, setFilteredLoans] = useState([]);
-  const [searchCriteria, setSearchCriteria] = useState({
-    loanId: '',
-    borrowerName: '',
-    status: ''
-  });
+  const [searchValue, setSearchValue] = useState('');
+  const [status, setStatus] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,6 +36,26 @@ function AdminMain() {
     fetchLoans();
   }, [navigate]);
 
+  useEffect(() => {
+    const handleSearch = () => {
+      const lowercasedSearchValue = searchValue.toLowerCase();
+      const lowercasedStatus = status.toLowerCase();
+      const searchValueAsInt = parseInt(searchValue, 10);
+
+      const filtered = allLoans.filter(loan =>
+        (searchValue === '' || 
+          (Number.isInteger(searchValueAsInt) && loan.id === searchValueAsInt) || 
+          loan.borrower.name.toLowerCase().includes(lowercasedSearchValue)) &&
+        (status === '' || loan.status.toLowerCase() === lowercasedStatus)
+      );
+
+      setFilteredLoans(filtered);
+      setCurrentPage(1); // Reset to first page when searching
+    };
+
+    handleSearch();
+  }, [searchValue, status, allLoans]);
+
   const handleLoanDetails = (loan) => {
     const token = sessionStorage.getItem("adminToken");
     if (!token) {
@@ -45,31 +65,29 @@ function AdminMain() {
     navigate('/loan', { state: { loan } });
   };
 
-  const handleSearch = () => {
-    const { loanId, borrowerName, status } = searchCriteria;
-    const lowercasedLoanId = parseInt(loanId, 10);
-    const lowercasedBorrowerName = borrowerName.toLowerCase();
-    const lowercasedStatus = status.toLowerCase();
-
-    const filtered = allLoans.filter(loan =>
-      (loanId === '' || loan.id === lowercasedLoanId) &&
-      (borrowerName === '' || loan.borrower.name.toLowerCase().includes(lowercasedBorrowerName)) &&
-      (status === '' || loan.status.toLowerCase() === lowercasedStatus)
-    );
-    setFilteredLoans(filtered);
-  };
-
   const handleClear = () => {
-    setSearchCriteria({ loanId: '', borrowerName: '', status: '' });
+    setSearchValue('');
+    setStatus('');
     setFilteredLoans(allLoans);
+    setCurrentPage(1); // Reset to first page when clearing
   };
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setSearchCriteria(prevCriteria => ({
-      ...prevCriteria,
-      [name]: value
-    }));
+    setSearchValue(e.target.value);
+  };
+
+  const handleStatusChange = (e) => {
+    setStatus(e.target.value);
+  };
+
+  const indexOfLastLoan = currentPage * itemsPerPage;
+  const indexOfFirstLoan = indexOfLastLoan - itemsPerPage;
+  const currentLoans = filteredLoans.slice(indexOfFirstLoan, indexOfLastLoan);
+
+  const totalPages = Math.ceil(filteredLoans.length / itemsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   return (
@@ -77,112 +95,132 @@ function AdminMain() {
       <h2 className="text-primary mb-4">All Loans</h2>
 
       <Row className="mb-4 align-items-center">
-      <Col md={8} lg={9}>
-        <InputGroup className="mb-3">
-          <Form.Control
-            type="text"
-            placeholder="Search by Loan ID"
-            name="loanId"
-            value={searchCriteria.loanId}
-            onChange={handleInputChange}
-            className="me-2" // Margin to the right
-          />
-          <Form.Control
-            type="text"
-            placeholder="Search by Borrower Name"
-            name="borrowerName"
-            value={searchCriteria.borrowerName}
-            onChange={handleInputChange}
-            className="me-2" // Margin to the right
-          />
-          <Form.Select
-            name="status"
-            value={searchCriteria.status}
-            onChange={handleInputChange}
-            aria-label="Select status"
-            className="me-2" // Margin to the right
-          >
-            <option value="">Select Status</option>
-            <option value="pending">Pending</option>
-            <option value="processing">Processing</option>
-            <option value="rejected">Rejected</option>
-            <option value="waiting agreement">Waiting Agreement</option>
-            <option value="approved">Approved</option>
-            <option value="accepted">Accepted</option>
-          </Form.Select>
-          <Button 
-            variant="primary" 
-            onClick={handleSearch}
-            className="ms-2 rounded"
-          >
-            <FaSearch className="me-2" /> Search
-          </Button>
-          <Button
-            variant="outline-secondary"
-            onClick={handleClear}
-            className="ms-2 rounded"
-          >
-            <MdClear className="me-2" /> Clear
-          </Button>
-          <Button
-            variant="outline-info"
-            onClick={() => window.location.reload()}
-            className="ms-2 rounded"
-          >
-            <IoMdRefresh className="me-2" /> Refresh
-          </Button>
-        </InputGroup>
-      </Col>
-  </Row>
+        <Col md={8} lg={9}>
+          <InputGroup className="mb-3">
+            <Form.Control
+              type="text"
+              placeholder="Search by Loan ID or Borrower Name"
+              value={searchValue}
+              onChange={handleInputChange}
+              className="me-2"
+              style={{ borderRadius: '0.25rem', boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)' }}
+            />
+            <Form.Select
+              value={status}
+              onChange={handleStatusChange}
+              aria-label="Select status"
+              className="me-2"
+              style={{ borderRadius: '0.25rem' }}
+            >
+              <option value="">Select Status</option>
+              <option value="pending">Pending</option>
+              <option value="processing">Processing</option>
+              <option value="rejected">Rejected</option>
+              <option value="waiting agreement">Waiting Agreement</option>
+              <option value="approved">Approved</option>
+              <option value="accepted">Accepted</option>
+            </Form.Select>
+            <Button
+              variant="outline-danger"
+              onClick={handleClear}
+              className="ms-2 rounded"
+              style={{ borderRadius: '0.25rem' }}
+            >
+              <MdClear className="me-2" /> Clear
+            </Button>
+            <Button
+              variant="outline-info"
+              onClick={() => window.location.reload()}
+              className="ms-2 rounded"
+              style={{ borderRadius: '0.25rem' }}
+            >
+              <IoMdRefresh className="me-2" /> Refresh
+            </Button>
+          </InputGroup>
+        </Col>
+      </Row>
 
-      <Table striped bordered hover responsive variant='light' className="shadow-sm">
-        <thead className="bg-primary text-white">
-          <tr>
-            <th>Loan ID</th>
-            <th>Amount</th>
-            <th>Type</th>
-            <th>Interest</th>
-            <th>Term (Months)</th>
-            <th>Status</th>
-            <th>Borrower Name</th>
-            <th>Phone</th>
-            <th>Email</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredLoans.length > 0 ? (
-            filteredLoans.map((loan) => (
-              <tr key={loan.id}>
-                <td>{loan.id}</td>
-                <td>₹ {loan.amount.toLocaleString()}</td>
-                <td>{loan.type}</td>
-                <td>{loan.interest}%</td>
-                <td>{loan.termMonths}</td>
-                <td className={`text-capitalize ${loan.status.toLowerCase()}`}>
-                  {loan.status}
-                </td>
-                <td>{loan.borrower.name}</td>
-                <td>{loan.borrower.phone}</td>
-                <td>{loan.borrower.email}</td>
-                <td>
-                  <Button 
-                    variant="outline-info"
-                    onClick={() => handleLoanDetails(loan)}
-                    className='d-flex align-items-center'
-                  >
-                    <FaInfoCircle className="me-2" /> View
-                  </Button>
-                </td>
-              </tr>
-            ))
-          ) : (
+      <motion.div 
+        initial={{ opacity: 0 }} 
+        animate={{ opacity: 1 }} 
+        transition={{ duration: 0.5 }}
+      >
+        <Table striped bordered hover responsive variant='light' className="shadow-sm">
+          <thead className="bg-primary text-white">
             <tr>
-              <td colSpan="10" className="text-center">No loans found</td>
+              <th>Loan ID</th>
+              <th>Amount</th>
+              <th>Type</th>
+              <th>Interest</th>
+              <th>Term (Months)</th>
+              <th>Status</th>
+              <th>Borrower Name</th>
+              <th>Phone</th>
+              <th>Email</th>
+              <th>Actions</th>
             </tr>
-          )}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {currentLoans.length > 0 ? (
+              currentLoans.map((loan) => (
+                <tr key={loan.id}>
+                  <td>{loan.id}</td>
+                  <td>₹ {loan.amount.toLocaleString()}</td>
+                  <td>{loan.type}</td>
+                  <td>{loan.interest}%</td>
+                  <td>{loan.termMonths}</td>
+                  <td className={`text-capitalize ${loan.status.toLowerCase()}`} style={{ textTransform: 'capitalize' }}>
+                    {loan.status}
+                  </td>
+                  <td>{loan.borrower.name}</td>
+                  <td>{loan.borrower.phone}</td>
+                  <td>{loan.borrower.email}</td>
+                  <td>
+                    <Button 
+                      variant="outline-info"
+                      onClick={() => handleLoanDetails(loan)}
+                      className='d-flex align-items-center'
+                      style={{ borderRadius: '0.25rem' }}
+                    >
+                      <FaInfoCircle className="me-2" /> View
+                    </Button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="10" className="text-center">No loans found</td>
+              </tr>
+            )}
+          </tbody>
+        </Table>
+      </motion.div>
+
+      <Row className="justify-content-center mt-4">
+        <Col md="auto">
+          <div className="d-flex justify-content-center">
+            <Button 
+              variant="outline-primary"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="me-2"
+              style={{ borderRadius: '0.25rem' }}
+            >
+              Previous
+            </Button>
+            <span className="my-auto">{currentPage} / {totalPages}</span>
+            <Button 
+              variant="outline-primary"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="ms-2"
+              style={{ borderRadius: '0.25rem' }}
+            >
+              Next
+            </Button>
+          </div>
+        </Col>
+      </Row>
     </Container>
   );
 }

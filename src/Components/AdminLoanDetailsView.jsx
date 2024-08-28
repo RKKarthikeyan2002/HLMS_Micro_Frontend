@@ -5,6 +5,7 @@ import { Card, Row, Col, Alert, Spinner, ListGroup, Button } from 'react-bootstr
 import { FaFileImage, FaUser, FaInfoCircle } from 'react-icons/fa';
 import { AiOutlineFilePdf } from 'react-icons/ai';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Swal from 'sweetalert2';
 
 const AdminLoanDetailsView = () => {
   const { loanId } = useParams();
@@ -76,13 +77,31 @@ const AdminLoanDetailsView = () => {
     }
 
     try {
-      await axios.patch(`http://localhost:8080/loanappli/application/${loan.id}`, formData, {
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data'
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes"
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          await axios.patch(`http://localhost:8080/loanappli/application/${loan.id}`, formData, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data'
+            }
+          });
+          await Swal.fire({
+            title: "Status Updated!",
+            text: "Application status has been Updated.",
+            icon: "success"
+          });
+          navigate("/adminHome")
         }
       });
-      navigate("/adminHome")
+      
     } catch (error) {
       console.error('Error updating loan status:', error);
       alert('Error updating loan status. Please try again.');
@@ -113,7 +132,7 @@ const AdminLoanDetailsView = () => {
 
   return (
     <div className="container mt-4">
-      <h1 className="text-center mb-4">Loan Details Report</h1>
+      <h1 className="text-center mb-4">Loan Application Details</h1>
 
       <Row className="mb-4">
         <Col md={12}>

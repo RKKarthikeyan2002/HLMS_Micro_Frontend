@@ -9,7 +9,7 @@ function AddBorrower() {
   return (
     <div className="d-flex flex-column min-vh-100 bg-light">
       <NavBar />
-      <Container fluid className="flex-grow-1 py-4 px-3">
+      <Container fluid className="">
         <Row className="mb-4">
           <Col>
             <motion.div

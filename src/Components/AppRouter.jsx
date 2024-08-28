@@ -23,6 +23,8 @@ import AdminLoanDetailPage from '../Pages/Admin/AdminLoanDetailPage';
 import UserLoanDetailsPage from '../Pages/UserLoanDetailsPage';
 import MyHomeLoanAggrement from '../Pages/MyHomeLoanAggrement';
 import AdminUserFeedbacks from '../Pages/Admin/AdminUserFeedbacks';
+import AdminNavbar from './AdminNavbar';
+import AdminProfile from './AdminProfile';
 
 function AppRouter() {
   return (
@@ -56,6 +58,7 @@ function AppRouter() {
               <Route path="/updatePendingLoan/:loanId" element={<> <ViewPendingLoan /> </>} />
               <Route path="/updateAcceptedLoan/:loanId" element={<> <ViewApprovedLoan /> </>} />
               <Route path="/feedbacks" element={<>  <AdminUserFeedbacks /> </>} />
+              <Route path="/adminProfile" element={<>  <AdminNavbar /> <AdminProfile /> </>} />
             </Routes>
         </Router>
       </AuthProvider>

@@ -78,7 +78,6 @@ function LoanDetails() {
                 <Col md={3}>{termMonths} months</Col>
               </Row>
               <Row className="details-row">
-                
                 <Col md={3}><strong>Status:</strong></Col>
                 <Col md={3}>{status}</Col>
                 <Col md={3}><strong>EMI:</strong></Col>

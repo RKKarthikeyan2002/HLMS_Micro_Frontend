@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FaFileUpload, FaIdCard, FaUser } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import Swal from 'sweetalert2';
 
 const ACCEPTED_FILE_TYPES = {
     aadhar: ['application/pdf'],
@@ -68,11 +69,17 @@ function Documents() {
             await axios.post('http://localhost:8080/document/upload', formData, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            alert('Application Submitted successfully');
+            await Swal.fire({
+                title: "Application Submitted Successfully",
+                icon: "success"
+              });
             navigate("/");
         } catch (error) {
             console.error('Error uploading files:', error);
-            alert('Failed to upload files');
+            Swal.fire({
+                title: "Oops... Something Went wrong",
+                icon: "error"
+              });
         }
     };
 
@@ -95,7 +102,7 @@ function Documents() {
                 <div className="bg-white shadow-lg rounded-lg p-8">
                     <h2 className="text-center text-3xl font-extrabold text-gray-900 mb-6">
                         <FaFileUpload className="inline-block text-blue-600 mr-3" />
-                        Upload Documents
+                        Upload Borrower's Documents
                     </h2>
                     <form className="space-y-6" onSubmit={handleSubmit}>
                         {[

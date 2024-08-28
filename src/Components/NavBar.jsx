@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../Providers/AuthContext';
 import '../Styles/NavBar.css';
 import {jwtDecode} from 'jwt-decode';
+import { FaCalculator, FaFileAlt, FaHome, FaRegComment } from 'react-icons/fa';
 
 function NavBar() {
   const navigate = useNavigate();
@@ -50,10 +51,14 @@ function NavBar() {
           R K Finance
         </Link>
         <div className="hidden md:flex items-center space-x-6">
-          <Link to="/" className="text-white hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 no-underline" aria-label="Home">Home</Link>
+          <Link to="/" className="flex items-center space-x-2 hover:text-gray-300 transition-colors no-underline text-white" aria-label="Home">
+            <FaHome className="text-lg" />
+            <span>Home</span>
+          </Link>
           <div className="relative group">
-            <button className="text-white focus:outline-none" onClick={toggleCalculator} aria-label="Calculator">
-              <span className="hover:text-gray-400">Calculator</span>
+            <button className="flex items-center space-x-2 hover:text-gray-300 transition-colors text-white" onClick={toggleCalculator} aria-label="Calculator">
+              <FaCalculator className="text-lg" />
+              <span>Calculator</span>
             </button>
             {isCalculatorOpen && (
               <div
@@ -70,9 +75,15 @@ function NavBar() {
             )}
           </div>
           {isAuthenticated && (
-            <Link to="/myApplication" className="text-white hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 no-underline" aria-label="My Application">My Application</Link>
+            <Link to="/myApplication" className="text-white hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 no-underline flex items-center space-x-2" aria-label="My Application">
+              <FaFileAlt className="text-lg" />
+              <span>My Application</span>
+            </Link>
           )}
-          <Link to="/feedbackForm" className="text-white hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 no-underline" aria-label="Contact">Feedback Form</Link>
+          <Link to="/feedbackForm" className="flex items-center space-x-2 hover:text-gray-200 transition-colors no-underline text-white" aria-label="Contact">
+            <FaRegComment className="text-xl" />
+            <span>Feedback Form</span>
+          </Link>
           
           {isAuthenticated ? (
             <div className="relative" style={{ zIndex: 50 }}>

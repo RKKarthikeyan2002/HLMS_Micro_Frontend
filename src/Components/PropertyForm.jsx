@@ -5,6 +5,7 @@ import { Button, Form, Alert, Container, Row, Col } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarkerAlt, faFileUpload, faFileInvoice } from '@fortawesome/free-solid-svg-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Swal from 'sweetalert2';
 
 function PropertyForm() {
     const location = useLocation();
@@ -78,8 +79,11 @@ function PropertyForm() {
                 headers: { 'Authorization': `Bearer ${token}` },
             });
 
-            setSuccessMessage("Application Submitted Successfully");
-            setTimeout(() => navigate('/'), 2000); // Redirect after 2 seconds
+            await Swal.fire({
+                title: "Property Uploaded Successfully",
+                icon: "success"
+              });
+              navigate("/");
         } catch (error) {
             console.error('Error uploading files:', error);
             alert('Failed to upload files');
@@ -135,7 +139,7 @@ function PropertyForm() {
                             </Form.Group>
                             <Form.Group controlId="itr" className="mt-3">
                                 <Form.Label>
-                                    <FontAwesomeIcon icon={faFileUpload} className="me-2" /> Upload IT Return (pdf)
+                                    <FontAwesomeIcon icon={faFileUpload} className="me-2" /> Upload IT Return upto 3 years (pdf)
                                 </Form.Label>
                                 <Form.Control
                                     type="file"

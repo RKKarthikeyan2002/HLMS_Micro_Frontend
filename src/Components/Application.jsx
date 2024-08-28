@@ -34,7 +34,8 @@ function Application() {
     const validateForm = () => {
         const newErrors = {};
         if (!formData.amount) newErrors.amount = 'Loan amount is required';
-        if (formData.amount < 500000) newErrors.amount = 'Minimum Loan amount is 5 Lakhs';
+        if (formData.amount <= 499999) newErrors.amount = 'Minimum Loan amount is 5 Lakhs';
+        if (formData.amount >= 50000000) newErrors.amount = 'Maximul Loan amount is 5 Crore';
         if (!formData.termMonths) newErrors.termMonths = 'Term in months is required';
         if (formData.termMonths < 36) newErrors.termMonths = 'Minimum Term months is 36';
         setErrors(newErrors);
@@ -75,7 +76,6 @@ function Application() {
         <div className="flex h-screen items-center justify-center px-4 sm:px-6 lg:px-8 bg-gray-100">
             <div className="w-full max-w-lg space-y-8">
                 <div className="bg-white shadow-lg rounded-lg p-8 transform transition-transform duration-300 hover:scale-105">
-                    <img className="mx-auto h-12 w-auto" src="https://floatui.com/logo-dark.svg" alt="Logo" />
                     <h2 className="text-center text-3xl font-extrabold text-gray-900 mb-6">
                         Loan Application
                     </h2>

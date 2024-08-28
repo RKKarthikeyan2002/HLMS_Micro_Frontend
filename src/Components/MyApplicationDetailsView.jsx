@@ -111,7 +111,7 @@ function MyApplicationDetailsView() {
                   </Row>
                   <Row>
                     <Col><strong>Status:</strong> {application.status || 'N/A'}</Col>
-                    <Col md={3}><strong>EMI:</strong> {Math.round(application.amount / application.termMonths)}</Col>
+                    <Col><strong>EMI:</strong> {Math.round(application.amount / application.termMonths)}</Col>
                   </Row>
                 </Card.Body>
               </Card>

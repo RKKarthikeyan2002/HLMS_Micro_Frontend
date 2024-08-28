@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../Providers/AuthContext';
-import { FaHome, FaCalculator, FaCog } from 'react-icons/fa';
+import { FaHome, FaCalculator, FaCog, FaRegComment } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 
 function AdminNavbar() {
@@ -9,7 +9,7 @@ function AdminNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, logout, login } = useAuth();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleProfile = () => setIsProfileOpen(!isProfileOpen);
@@ -23,6 +23,14 @@ function AdminNavbar() {
     navigate("/");
   };
 
+  useEffect(() => {
+    login();
+    const token = sessionStorage.getItem("adminToken");
+    if (token) {
+        return;
+    }
+  }, [navigate]);
+
   return (
     <nav className="bg-gray-900 text-white shadow-md sticky top-0 z-50">
       <div className="container mx-auto flex items-center justify-between p-4">
@@ -31,10 +39,6 @@ function AdminNavbar() {
         </Link>
 
         <div className="hidden md:flex items-center space-x-6">
-          <Link to="/" className="flex items-center space-x-2 hover:text-gray-300 transition-colors no-underline text-white">
-            <FaHome className="text-lg" />
-            <span>Home</span>
-          </Link>
           <div className="relative group">
             <button className="flex items-center space-x-2 hover:text-gray-300 transition-colors" onClick={toggleCalculator}>
               <FaCalculator className="text-lg" />
@@ -52,7 +56,8 @@ function AdminNavbar() {
               </motion.div>
             )}
           </div>
-          <Link to="/feedbacks" className="flex items-center space-x-2 hover:text-gray-300 transition-colors no-underline text-white">
+          <Link to="/feedbacks" className="flex items-center space-x-2 hover:text-gray-200 transition-colors no-underline text-white">
+            <FaRegComment className="text-xl" />
             <span>Feedback</span>
           </Link>
           {isAuthenticated ? (
@@ -69,7 +74,7 @@ function AdminNavbar() {
                   transition={{ duration: 0.3 }}
                   className="absolute right-0 mt-2 w-48 bg-gray-800 text-white rounded-md shadow-lg"
                 >
-                  <Link to="/profile" className="block w-full px-4 py-2 text-white hover:bg-gray-700 transition-colors no-underline">My Profile</Link>
+                  <Link to="/adminProfile" className="block w-full px-4 py-2 text-white hover:bg-gray-700 transition-colors no-underline">My Profile</Link>
                   <button onClick={handleLogout} className="block w-full px-4 py-2 text-left hover:bg-gray-700 transition-colors">Logout</button>
                 </motion.div>
               )}
@@ -120,7 +125,7 @@ function AdminNavbar() {
                   className="absolute left-0 mt-2 w-full bg-gray-800 text-white rounded-md shadow-lg"
                 >
                   <Link 
-                    to="/profile" 
+                    to="/adminProfile" 
                     className="block px-4 py-2 text-white hover:bg-gray-700 transition-colors"
                   >
                     My Profile

@@ -77,7 +77,7 @@ function SignUp() {
     <main className="flex flex-col md:flex-row w-full min-h-screen">
       <div className="relative flex-1 hidden md:flex items-center justify-center bg-gradient-to-r from-gray-400 to-indigo-600 text-white p-12">
         <div className="relative z-10 max-w-md text-center">
-          <img src="https://floatui.com/logo-dark.svg" width={150} alt="Logo" className="mx-auto" />
+          {/* <img src="https://floatui.com/logo-dark.svg" width={150} alt="Logo" className="mx-auto" /> */}
           <h3 className="text-4xl font-bold mt-8">Start Building Your Home Quickly</h3>
           <p className="mt-4 text-lg">Create an account and get access to all features.</p>
         </div>

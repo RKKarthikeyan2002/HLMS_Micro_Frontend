@@ -7,9 +7,9 @@ import Steps3 from '../Components/Steps3';
 
 function AddDocuments() {
   return (
-    <div className="d-flex flex-column min-vh-100 bg-light">
+    <div className="">
       <NavBar />
-      <Container fluid className="flex-grow-1 py-4 px-3">
+      <Container fluid className="py-4 px-3">
         <Row className="mb-4">
           <Col>
             <motion.div

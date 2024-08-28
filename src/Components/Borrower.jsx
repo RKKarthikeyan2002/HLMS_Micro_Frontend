@@ -27,7 +27,13 @@ function Borrower() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prevData => ({ ...prevData, [name]: value }));
+        setFormData(prevData => {
+            const updatedData = { ...prevData, [name]: value };
+            if (name === 'dob') {
+                updatedData.age = calculateAge(value);
+            }
+            return updatedData;
+        });
         validateForm();
     };
 
@@ -54,8 +60,8 @@ function Borrower() {
 
         if (!formData.age) {
             newErrors.age = 'Age is required';
-        } else if (formData.age < 18 || formData.age > 120) {
-            newErrors.age = 'Age must be between 18 and 120';
+        } else if (formData.age < 18 || formData.age > 60) {
+            newErrors.age = 'Age must be between 18 and 60';
         }
 
         if (!formData.address) {
@@ -64,8 +70,8 @@ function Borrower() {
 
         if (!formData.salary) {
             newErrors.salary = 'Monthly Salary is required';
-        } else if (formData.salary <= 0) {
-            newErrors.salary = 'Salary must be greater than 0';
+        } else if (formData.salary <= 4999) {
+            newErrors.salary = 'Salary must be greater than 5000';
         }
 
         if (!formData.dob) {
@@ -131,14 +137,14 @@ function Borrower() {
         axios.get(`http://localhost:8080/customer/${sub}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         })
-        .then(response => setFormData(prevData => ({ 
+        .then(response => setFormData(prevData => ({
             ...prevData, 
             customer: response.data,
             name: response.data.name,
             email: response.data.email,
             phone: response.data.phone,
             dob: response.data.dob,
-            age: response.data.age,
+            age: calculateAge(response.data.dob),
             address: response.data.address,
         })))
         .catch(error => {
@@ -146,12 +152,22 @@ function Borrower() {
         });
     }, [navigate]);
 
+    const calculateAge = (dob) => {
+        if (!dob) return '';
+        const birthDate = new Date(dob);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDifference = today.getMonth() - birthDate.getMonth();
+        if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    };
+
     return (
         <div className="flex h-screen items-center justify-center px-4 sm:px-6 lg:px-8">
             <div className="w-full max-w-3xl space-y-8">
-                <div className="bg-white shadow-md rounded-md p-6">
-                    <img className="mx-auto h-12 w-auto" src="https://floatui.com/logo-dark.svg" alt="Logo" />
-    
+                <div className="bg-white shadow-md rounded-md p-6">   
                     <h2 className="my-3 text-center text-3xl font-bold tracking-tight text-gray-900">
                         Borrower Details
                     </h2>
@@ -209,6 +225,7 @@ function Borrower() {
                                         value={formData.age || ''}
                                         onChange={handleChange}
                                         isInvalid={!!errors.age}
+                                        readOnly
                                     />
                                     <Form.Control.Feedback type="invalid">
                                         {errors.age}
